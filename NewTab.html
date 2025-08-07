@@ -9,7 +9,26 @@
       "https://www.google.de",
       "https://green-water-001073903.5.azurestaticapps.net/welcome"
     ];
-    const randomUrl = urls[Math.floor(Math.random() * urls.length)];
+
+    // Letzte zwei URLs aus dem Local Storage abrufen
+    let lastUrls = JSON.parse(localStorage.getItem("lastUrls") || "[]");
+
+    // Liste der möglichen URLs filtern, sodass nur URLs übrig bleiben, die nicht unter den letzten zwei waren
+    let filteredUrls = urls.filter(url => !lastUrls.includes(url));
+
+    // Wenn alle URLs in den letzten zwei verwendet wurden, alle wieder zulassen
+    if (filteredUrls.length === 0) {
+      filteredUrls = urls;
+    }
+
+    // Zufällige neue URL wählen
+    const randomUrl = filteredUrls[Math.floor(Math.random() * filteredUrls.length)];
+
+    // Neue URL der Liste voranstellen und nur die letzten zwei merken
+    lastUrls.unshift(randomUrl);
+    localStorage.setItem("lastUrls", JSON.stringify(lastUrls.slice(0, 2)));
+
+    // Weiterleitung
     window.onload = () => {
       window.location.href = randomUrl;
     };
